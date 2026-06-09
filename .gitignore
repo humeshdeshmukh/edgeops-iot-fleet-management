@@ -2,15 +2,28 @@
 node_modules/
 dist/
 build/
+coverage/
+.cache/
+.eslintcache
 .env
 .env.*
 *.local
+*.log
+*.pid
+*.seed
+*.out
+*.err
+*.swp
+*.swo
 
 # Vite
 /.vite
+frontend/node_modules/
 frontend/.vite/
 frontend/dist/
 frontend/coverage/
+frontend/.env
+frontend/.env.*
 
 # Logs
 npm-debug.log*
@@ -26,9 +39,14 @@ yarn-error.log*
 
 # Ansible
 ansible/vault/*.yml
+*.retry
+ansible/.ansible/
 
 # Terraform
 .terraform/
+*.tfstate
+*.tfstate.*
+crash.log
 
 # Docker
 *.tar

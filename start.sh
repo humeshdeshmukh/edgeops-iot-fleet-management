@@ -13,14 +13,28 @@ fi
 
 # 2) Start Prometheus (container) using the federation config
 if command -v docker >/dev/null 2>&1; then
-  if [ "$(docker ps -q -f name=edge-prometheus)" = "" ]; then
+  if [ -n "$(docker ps -q -f name=^/edge-prometheus$)" ]; then
+    echo "Prometheus container already running"
+  else
+    if [ -n "$(docker ps -aq -f name=^/edge-prometheus$)" ]; then
+      echo "Removing stale edge-prometheus container"
+      docker rm -f edge-prometheus >/dev/null 2>&1 || true
+    fi
+
     echo "Starting Prometheus container (edge-prometheus)"
-    docker run -d --name edge-prometheus -p 9090:9090 \
+    PROMETHEUS_PORT=${PROMETHEUS_PORT:-9090}
+    while command -v ss >/dev/null 2>&1 && ss -ltn | awk -v port=":$PROMETHEUS_PORT" 'NR > 1 && $4 ~ port "$" { found = 1 } END { exit found ? 0 : 1 }'; do
+      echo "Port $PROMETHEUS_PORT is already in use; trying $((PROMETHEUS_PORT + 1))"
+      PROMETHEUS_PORT=$((PROMETHEUS_PORT + 1))
+    done
+    if docker run -d --name edge-prometheus -p "$PROMETHEUS_PORT:9090" \
       -v "$ROOT_DIR/monitoring/prometheus-federation.yaml":/etc/prometheus/prometheus.yml \
       -v "$ROOT_DIR/monitoring":/etc/prometheus/rules \
-      prom/prometheus:latest --config.file=/etc/prometheus/prometheus.yml || true
-  else
-    echo "Prometheus container already running"
+      prom/prometheus:latest --config.file=/etc/prometheus/prometheus.yml; then
+      echo "Prometheus container exposed on host port $PROMETHEUS_PORT"
+    else
+      echo "Failed to start Prometheus container"
+    fi
   fi
 else
   echo "Docker not found; skipping Prometheus start"

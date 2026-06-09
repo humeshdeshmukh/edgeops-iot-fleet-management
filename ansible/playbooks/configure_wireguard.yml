@@ -1,0 +1,53 @@
+---
+- name: Configure WireGuard on edge nodes (example)
+  hosts: edge
+  become: yes
+  vars:
+    wg_interface: wg0
+    wg_address: "10.10.{{ inventory_hostname_short | default('1') }}.2/24"
+    peer_endpoint: "vpn.central.example.com:51820"
+    peer_public_key: "REPLACE_WITH_CENTRAL_PEER_PUBLIC_KEY"
+  tasks:
+    - name: Install wireguard packages
+      apt:
+        name: [wireguard, iproute2]
+        state: present
+        update_cache: yes
+
+    - name: Create WireGuard keys if missing
+      shell: |
+        umask 077
+        mkdir -p /etc/wireguard
+        if [ ! -f /etc/wireguard/privatekey ]; then
+          wg genkey | tee /etc/wireguard/privatekey | wg pubkey > /etc/wireguard/publickey
+        fi
+      args:
+        creates: /etc/wireguard/privatekey
+
+    - name: Read local public key
+      slurp:
+        src: /etc/wireguard/publickey
+      register: wg_pub
+
+    - name: Write basic WireGuard config
+      copy:
+        dest: "/etc/wireguard/{{ wg_interface }}.conf"
+        content: |
+          [Interface]
+          Address = {{ wg_address }}
+          PrivateKey = {{ lookup('file','/etc/wireguard/privatekey') }}
+          SaveConfig = true
+
+          [Peer]
+          PublicKey = {{ peer_public_key }}
+          Endpoint = {{ peer_endpoint }}
+          AllowedIPs = 10.10.0.0/16
+      notify:
+        - enable-wireguard
+
+  handlers:
+    - name: enable-wireguard
+      become: yes
+      shell: |
+        systemctl enable wg-quick@{{ wg_interface }}
+        systemctl restart wg-quick@{{ wg_interface }}

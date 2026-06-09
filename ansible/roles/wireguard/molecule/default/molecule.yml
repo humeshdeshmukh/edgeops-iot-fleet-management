@@ -1,0 +1,15 @@
+---
+driver:
+  name: docker
+
+platforms:
+  - name: instance
+    image: "ubuntu:22.04"
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: converge.yml
+
+lint:
+  name: yamllint

@@ -1,0 +1,7 @@
+{
+  "ArgoCD": { "status": "up", "details": "ApplicationSet synced" },
+  "Prometheus": { "status": "up", "details": "Scraping node-exporter" },
+  "Nomad": { "status": "up", "details": "1 client connected" },
+  "WireGuard": { "status": "up", "details": "wg0 active" },
+  "K3s": { "status": "up", "details": "k3s running" }
+}

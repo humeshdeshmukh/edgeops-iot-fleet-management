@@ -1,0 +1,20 @@
+---
+- name: Install wireguard package
+  apt:
+    name: wireguard
+    state: present
+    update_cache: yes
+
+- name: Ensure /etc/wireguard exists
+  file:
+    path: /etc/wireguard
+    state: directory
+    mode: '0700'
+
+- name: Deploy WireGuard config
+  template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    mode: '0600'
+  notify: restart wireguard

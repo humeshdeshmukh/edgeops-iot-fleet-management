@@ -1,0 +1,9 @@
+[Interface]
+Address = {{ wg_interface_address | default('10.10.1.2/24') }}
+PrivateKey = {{ wg_private_key | default('REPLACE_ME') }}
+ListenPort = 51820
+
+[Peer]
+PublicKey = {{ wg_peer_public_key | default('REPLACE_PEER_KEY') }}
+Endpoint = {{ wg_peer_endpoint | default('vpn.central.example.com:51820') }}
+AllowedIPs = 10.10.0.0/16

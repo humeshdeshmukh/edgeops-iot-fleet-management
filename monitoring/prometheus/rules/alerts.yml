@@ -1,0 +1,20 @@
+groups:
+- name: edge-alerts
+  rules:
+  - alert: EdgeNodeDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Edge node down"
+      description: "Prometheus reports node is down on {{ $labels.instance }}"
+
+  - alert: HighMemoryUsage
+    expr: node:memory_utilisation:ratio > 0.9
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High memory usage on edge node"
+      description: "Memory usage over 90% on {{ $labels.instance }}"

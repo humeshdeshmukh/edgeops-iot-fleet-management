@@ -1,0 +1,27 @@
+name: CI with Vault example
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Vault (client)
+        uses: hashicorp/vault-action@v2
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: 'token'
+          token: ${{ secrets.VAULT_TOKEN }}
+
+      - name: Read secret example
+        env:
+          SECRET: ${{ steps.vault.outputs.secret }}
+        run: echo "Vault integration placeholder"
+
+      - name: Run CI steps
+        run: |
+          make build-image
+          make lint-chart

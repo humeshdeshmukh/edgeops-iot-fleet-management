@@ -1,0 +1,7 @@
+groups:
+- name: edge-recordings
+  rules:
+  - record: job:http_requests:rate5m
+    expr: rate(http_requests_total[5m])
+  - record: node:memory_utilisation:ratio
+    expr: 1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)

@@ -1,0 +1,6 @@
+---
+- name: restart wireguard
+  become: yes
+  shell: |
+    systemctl enable wg-quick@wg0
+    systemctl restart wg-quick@wg0

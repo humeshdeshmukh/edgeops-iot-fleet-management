@@ -1,0 +1,6 @@
+apiVersion: v2
+name: store-app
+description: Helm chart for the example store application (edge-optimized)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

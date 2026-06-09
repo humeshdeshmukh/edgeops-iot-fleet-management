@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-edge-agent
+  labels:
+    app.kubernetes.io/part-of: edgeops
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/your-org/edgeops-repo.git"
+    targetRevision: HEAD
+    path: argocd-edge
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

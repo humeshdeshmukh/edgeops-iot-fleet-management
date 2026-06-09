@@ -1,0 +1,19 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "graph",
+      "title": "HTTP Requests rate",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[5m])",
+          "legendFormat": "{{instance}}"
+        }
+      ]
+    }
+  ],
+  "title": "Store App Overview",
+  "uid": "store-dashboard"
+}

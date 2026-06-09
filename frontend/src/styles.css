@@ -1,0 +1,7 @@
+body { font-family: Arial, sans-serif; margin: 0; padding: 16px; background: #f5f7fb }
+.container { max-width: 960px; margin: 0 auto }
+.grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 12px }
+.card { background: white; padding: 12px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06) }
+.card.up { border-left: 6px solid #22c55e }
+.card.down { border-left: 6px solid #ef4444 }
+.card.unknown { border-left: 6px solid #f59e0b }

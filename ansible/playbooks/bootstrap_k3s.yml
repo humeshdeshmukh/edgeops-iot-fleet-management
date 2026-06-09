@@ -1,0 +1,40 @@
+---
+- name: Bootstrap K3s on edge nodes (idempotent, minimal example)
+  hosts: edge
+  become: yes
+  vars:
+    k3s_version: "v1.27.6+k3s1"
+  tasks:
+    - name: Ensure required packages are installed
+      apt:
+        name:
+          - curl
+          - ca-certificates
+          - apt-transport-https
+        state: present
+        update_cache: yes
+
+    - name: Create k3s service user
+      user:
+        name: k3s
+        state: present
+        create_home: yes
+
+    - name: Install K3s using official install script
+      shell: |
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }} sh -s - --write-kubeconfig-mode 644
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Ensure kubeconfig exists
+      file:
+        path: /etc/rancher/k3s/k3s.yaml
+        state: file
+
+    - name: Wait for kube-system pods to be listed
+      shell: |
+        kubectl --kubeconfig=/etc/rancher/k3s/k3s.yaml get pods -n kube-system --no-headers
+      register: k3s_pods
+      retries: 10
+      delay: 6
+      until: k3s_pods.rc == 0

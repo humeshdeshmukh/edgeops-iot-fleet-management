@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: edge-stores-applications
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: store-001
+            url: https://kubernetes.default.svc
+            namespace: store-app
+          - cluster: store-002
+            url: https://kubernetes.default.svc
+            namespace: store-app
+  template:
+    metadata:
+      name: '{{cluster}}-store-app'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/your-org/edgeops-repo.git'
+        targetRevision: HEAD
+        path: deployments/store-app
+      destination:
+        server: '{{url}}'
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

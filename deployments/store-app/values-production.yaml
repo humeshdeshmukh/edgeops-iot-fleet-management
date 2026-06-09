@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: your-registry.example.com/store-app
+  tag: v1.0.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80

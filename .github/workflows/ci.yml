@@ -1,0 +1,44 @@
+name: CI: Build & Publish + Helm Lint
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to registry
+        if: secrets.REGISTRY_USERNAME != ''
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push image
+        if: secrets.REGISTRY_URL != ''
+        uses: docker/build-push-action@v4
+        with:
+          context: ./deployments/store-app
+          push: true
+          tags: ${{ secrets.REGISTRY_URL }}/store-app:latest
+
+      - name: Helm lint
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.14.0
+
+      - name: Run helm lint
+        run: |
+          helm lint deployments/store-app

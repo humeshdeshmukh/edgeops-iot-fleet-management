@@ -1,0 +1,12 @@
+---
+# Variables for edge group
+k3s_version: "v1.27.6+k3s1"
+wg_interface: wg0
+wg_peer_endpoint: "vpn.central.example.com:51820"
+wg_peer_public_key: "REPLACE_WITH_CENTRAL_PEER_PUBLIC_KEY"
+
+# Nomad settings (if using Nomad on some devices)
+nomad_client_enabled: true
+
+# Prometheus remote write endpoint (central)
+prometheus_remote_write: "https://central-prometheus.example.com/api/v1/write"

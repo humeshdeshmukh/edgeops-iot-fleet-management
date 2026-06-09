@@ -1,0 +1,7 @@
+Release "store-app" does not exist. Installing it now.
+NAME: store-app
+LAST DEPLOYED: Tue Jun  9 15:18:04 2026
+NAMESPACE: store-app
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None

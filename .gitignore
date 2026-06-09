@@ -3,9 +3,14 @@ node_modules/
 dist/
 build/
 .env
+.env.*
+*.local
 
 # Vite
 /.vite
+frontend/.vite/
+frontend/dist/
+frontend/coverage/
 
 # Logs
 npm-debug.log*
@@ -27,3 +32,6 @@ ansible/vault/*.yml
 
 # Docker
 *.tar
+
+# Copilot session artifacts
+.copilot/

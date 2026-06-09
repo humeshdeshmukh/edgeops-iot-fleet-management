@@ -1,7 +1,7 @@
-Release "store-app" does not exist. Installing it now.
+Release "store-app" has been upgraded. Happy Helming!
 NAME: store-app
-LAST DEPLOYED: Tue Jun  9 15:18:04 2026
+LAST DEPLOYED: Tue Jun  9 15:18:35 2026
 NAMESPACE: store-app
 STATUS: deployed
-REVISION: 1
+REVISION: 2
 TEST SUITE: None

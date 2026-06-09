@@ -1,6 +1,6 @@
 # EdgeOps Frontend
 
-Minimal React (Vite) app to visualize component statuses. Uses a static `status.json` in `public/` as a placeholder for real telemetry.
+Flagship React (Vite) dashboard for the EdgeOps fleet. It turns the static `status.json` snapshot in `public/` into an executive-style operations view with summary metrics, service health, and domain coverage.
 
 Run locally:
 

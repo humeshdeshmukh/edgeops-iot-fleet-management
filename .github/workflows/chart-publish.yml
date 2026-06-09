@@ -8,6 +8,10 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      CHART_REGISTRY: ${{ secrets.CHART_REGISTRY }}
+      CHART_USERNAME: ${{ secrets.CHART_USERNAME }}
+      CHART_PASSWORD: ${{ secrets.CHART_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -17,11 +21,11 @@ jobs:
           version: v3.14.0
 
       - name: Log in to OCI registry
-        if: secrets.CHOART_REGISTRY != ''
+        if: env.CHART_REGISTRY != '' && env.CHART_USERNAME != '' && env.CHART_PASSWORD != ''
         run: |
-          echo ${{ secrets.CHOART_PASSWORD }} | helm registry login -u ${{ secrets.CHOART_USERNAME }} --password-stdin ${{ secrets.CHOART_REGISTRY }}
+          echo "${{ env.CHART_PASSWORD }}" | helm registry login -u "${{ env.CHART_USERNAME }}" --password-stdin "${{ env.CHART_REGISTRY }}"
 
       - name: Package and push chart
         run: |
           helm package deployments/store-app
-          helm push store-app-*.tgz oci://${{ secrets.CHOART_REGISTRY }}/charts
+          helm push store-app-*.tgz oci://${{ env.CHART_REGISTRY }}/charts

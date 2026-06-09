@@ -1,4 +1,4 @@
-name: CI: Helm Test
+name: "CI: Helm Test"
 
 on:
   pull_request:

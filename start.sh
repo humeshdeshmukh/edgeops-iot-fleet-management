@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROMETHEUS_HOST_PORT=""
+FRONTEND_HOST_PORT=""
 
 print_access_info() {
   echo
@@ -35,6 +36,10 @@ print_access_info() {
     echo "Store app UI: kubectl -n store-app port-forward svc/store-app 8081:80"
     echo "Store app URL: http://127.0.0.1:8081"
   fi
+
+  echo "Frontend UI: cd frontend && npm run dev -- --host 127.0.0.1 --port ${FRONTEND_HOST_PORT:-5173}"
+  echo "Frontend URL: http://127.0.0.1:${FRONTEND_HOST_PORT:-5173}"
+  echo "Frontend has no default username/password in this setup"
 }
 
 echo "Starting Project 18 demo components..."
@@ -82,6 +87,27 @@ if command -v nomad >/dev/null 2>&1; then
   nomad job run "$ROOT_DIR/nomad/jobs/store_app.nomad" || true
 else
   echo "Nomad not found; skipping Nomad job submission"
+fi
+
+# 4) Start frontend if dependencies are already installed
+if [ -f "$ROOT_DIR/frontend/package.json" ]; then
+  if command -v npm >/dev/null 2>&1 && [ -d "$ROOT_DIR/frontend/node_modules" ]; then
+    FRONTEND_PORT=${FRONTEND_PORT:-5173}
+    if command -v ss >/dev/null 2>&1 && ss -ltn | awk -v port=":$FRONTEND_PORT" 'NR > 1 && $4 ~ port "$" { found = 1 } END { exit found ? 0 : 1 }'; then
+      echo "Frontend port $FRONTEND_PORT is already in use; skipping Vite startup"
+      FRONTEND_HOST_PORT="$FRONTEND_PORT"
+    else
+      echo "Starting frontend dev server"
+      if (cd "$ROOT_DIR/frontend" && nohup npm run dev -- --host 127.0.0.1 --port "$FRONTEND_PORT" > "$ROOT_DIR/frontend/.vite.log" 2>&1 &); then
+        FRONTEND_HOST_PORT="$FRONTEND_PORT"
+        echo "Frontend URL exposed on http://127.0.0.1:$FRONTEND_PORT"
+      else
+        echo "Failed to start frontend dev server"
+      fi
+    fi
+  else
+    echo "Frontend not started; run: cd frontend && npm install && npm run dev -- --host 127.0.0.1 --port 5173"
+  fi
 fi
 
 print_access_info
